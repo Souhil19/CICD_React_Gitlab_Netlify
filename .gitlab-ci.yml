@@ -1,0 +1,31 @@
+stages:
+  - test
+  - build
+  - deploy
+
+test:
+  stage: test
+  image: node:16.14.2
+  script:
+    - npm install
+    - npm run test
+
+build project:
+  stage: build
+  image: node:16.14.2
+  script:
+    - npm -v
+    - npm ci
+    - npm install --no-optional --legacy-peer-deps
+    - CI=false npm run build
+    #- npm run build
+  artifacts:
+    paths:
+      - build/
+
+deploy netlify:
+  stage: deploy
+  image: node:16.14.2
+  script:
+    - npm install -g netlify-cli
+    - netlify deploy --dir=build --prod
